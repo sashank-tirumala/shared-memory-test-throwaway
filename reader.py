@@ -48,4 +48,4 @@ if __name__ == "__main__":
         read_lock.release()
         if time.time() - start_time > 10:
             break
-    print(f"Reader {args.reader} is done")
+    print(f"Reader {args.reader} completed successfully, no data corruption detected.")

@@ -26,10 +26,24 @@ if __name__ == "__main__":
     read_lock = posix_ipc.Semaphore("/read_semaphore", posix_ipc.O_CREAT)
     read_lock.release()
     resource_lock.release()
-    shmseg_lidar_frame_0 = shared_memory.SharedMemory(
+    try:
+        shmseg_lidar_frame_0 = shared_memory.SharedMemory(
                     create=True, size=_dummy_array_data.nbytes, name="shared_test_memory_2"
                 )
-    shmseg_reader = shared_memory.SharedMemory(create=True, size=4, name="reader_count")
+    except FileExistsError:
+        shared_memory.SharedMemory(
+                    create=False, size=_dummy_array_data.nbytes, name="shared_test_memory_2"
+                ).unlink()
+        shmseg_lidar_frame_0 = shared_memory.SharedMemory(
+                    create=True, size=_dummy_array_data.nbytes, name="shared_test_memory_2"
+                )
+    
+    try:
+        shmseg_reader = shared_memory.SharedMemory(create=True, size=4, name="reader_count")
+    except FileExistsError:
+        shared_memory.SharedMemory(create=False, size=4, name="reader_count").unlink()
+        shmseg_reader = shared_memory.SharedMemory(create=True, size=4, name="reader_count")
+
     shmseg_reader.buf[:] = int(0).to_bytes(4, byteorder='little')
     while True:
         resource_lock.acquire()
