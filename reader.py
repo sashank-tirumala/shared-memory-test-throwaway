@@ -5,8 +5,13 @@ import posix_ipc
 import time
 
 import numpy as np  # not heavily used in v1.0 but future version will require it for sure!
+import argparse
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--reader', type=int, help='Reader number')
+    args = parser.parse_args()
+    reader = args.reader
     n = np.ones(10000)
     _dummy_array_data = np.zeros(10000)
     arr_size = _dummy_array_data.nbytes
@@ -43,5 +48,4 @@ if __name__ == "__main__":
         read_lock.release()
         if time.time() - start_time > 10:
             break
-    
-    print("Reader 2 is done")
+    print(f"Reader {args.reader} is done")
